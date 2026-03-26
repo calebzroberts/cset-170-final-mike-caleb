@@ -3,6 +3,11 @@
 {% block title %}Main Page{% endblock %}
 
 {% block content %}
-<h1>Welcome to the Main Page</h1>
-<p>This is the home page of our Flask application.</p>
+<h1>Welcome to Our Banking App!</h1>
+<p>Here you can either log in to manage your account or sign up if you are a new user.</p>
+<div class="actions">
+        
+    <a href="/login" class="button-outline">Log In</a>
+    <a href="/signup" class="button-primary">Sign Up</a>
+</div>
 {% endblock %}

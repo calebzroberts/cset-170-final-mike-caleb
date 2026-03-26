@@ -4,15 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Flask App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/bank-style.css') }}">
 </head>
 <body>
-    <nav>
-        <a href="/">Main</a> |
-        <a href="/login">Login</a> |
-        <a href="/signup">Sign Up</a> |
-        <a href="/admin">Admin</a> |
-        <a href="/account">My Account</a>
-    </nav>
+    <header class="navbar">
+        <!-- Brand / Logo Section -->
+        <div class="brand">
+            <div class="logo">M&C</div> <!-- Replace with an icon or initials -->
+            <span class="title">Mike & Caleb's Bank</span>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="nav-links">
+            <a href="/">Main</a>
+            <a href="/login">Login</a>
+            <a href="/signup">Sign Up</a>
+            <a href="/admin">Admin</a>
+            <a href="/account">My Account</a>
+        </nav>
+
+        <!-- Profile Avatar Section -->
+        <div class="profile" title="User Profile">
+            <p>CR</p>
+        </div>
+    </header>
+    
     <main>
         {% block content %}{% endblock %}
     </main>
