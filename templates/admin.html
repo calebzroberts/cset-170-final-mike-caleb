@@ -4,6 +4,44 @@
 
 {% block content %}
 <h1>Admin Dashboard</h1>
-<p>This is the admin page. Only administrators should access this.</p>
-<!-- Add admin-specific content here -->
+<p>Review new users and approve to create them an account.</p>
+
+<div class="user-list">
+    {% set mock_users = [
+        {"id": 1, "name": "Alice Smith", "email": "alice@example.com"},
+        {"id": 2, "name": "Bob Johnson", "email": "bob@example.com"},
+        {"id": 3, "name": "Carol Lee", "email": "carol@example.com"},
+        {"id": 4, "name": "Richard Doe", "email": "richard@example.com"},
+        {"id": 5, "name": "Grant Williams", "email": "grant@example.com"},
+        {"id": 6, "name": "Lily Adams", "email": "lily@example.com"}
+    ] %}
+
+    {% for user in mock_users %}
+    <div class="user-card">
+        <p><strong>{{ user.name }}</strong></p>
+        <p>{{ user.email }}</p>
+        <div class="actions">
+            <button class="button-primary approve-btn">Approve</button>
+            <button class="button-outline reject-btn">Reject</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<h2>Danger Zone</h2>
+<p>This will reset the simulation.</p>
+<div class="actions">
+    <button class="button-outline" onclick="window.location.reload()">Reset Database</button>
+</div>
+
+<script>
+    // Select all approve/reject buttons
+    document.querySelectorAll('.approve-btn, .reject-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const card = this.closest('.user-card'); // find the card
+            card.remove(); // remove it from the DOM
+        });
+    });
+</script>
+
 {% endblock %}

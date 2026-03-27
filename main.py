@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
 from sqlalchemy import create_engine, text
-import os
 
 app = Flask(__name__)
 
@@ -33,6 +32,10 @@ def admin():
 @app.route('/account')
 def account():
     return render_template('account.html')
+
+@app.route('/transactions')
+def transactions():
+    return render_template('transactions.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
