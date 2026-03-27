@@ -143,18 +143,24 @@ main {
     color: #cbd5e1;
 }
 
-.card form {
+
+
+form {
     margin-top: 14px;
 }
 
-.card form label {
+form > * {
+    margin: 12px 0;
+}
+
+form label, form ::placeholder {
     display: block;
     font-size: 0.9rem;
     color: #cbd5e1;
     margin: 12px 5px 6px 5px;
 }
 
-.card form input {
+form input {
     width: 100%;
     padding: 10px 14px;
     border-radius: 10px;
@@ -163,6 +169,34 @@ main {
     color: #e2e8f0;
     font-size: 0.9rem;
     transition: border-color 0.25s ease;
+}
+
+form .container {
+    display: flex;
+    gap: 8px;
+    margin: 18px 0px 18px 8px;
+    min-height: 3rem;
+}
+
+form .container > * {
+    min-width: 0; /* prevents overflow issues */
+}
+
+form .twenty  { flex: 2; }
+form .thirty  { flex: 3; }
+form .forty   { flex: 4; }
+form .fifty   { flex: 5; }
+form .sixty   { flex: 6; }
+form .seventy { flex: 7; }
+form .eighty  { flex: 8; }
+form .ninety  { flex: 9; }
+form .hundred { flex: 10; }
+
+form p {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #cbd5e1;
+    margin: 20px 5px 6px 5px;
 }
 
 .actions {
@@ -207,15 +241,41 @@ main {
 }
 
 @media (max-width: 820px) {
+    /* Allow navbar items to wrap */
     .navbar {
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 12px;
+        padding: 12px 16px;
     }
 
+    /* Brand stays on top-left */
+    .navbar .brand {
+        flex: 1 1 100%;
+        justify-content: flex-start;
+        gap: 8px;
+    }
+
+    /* Nav links take full width, wrap to next line if needed */
     .navbar .nav-links {
-        order: 3;
-        width: 100%;
-        justify-content: space-between;
+        flex: 1 1 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: flex-start;
+    }
+
+    /* Each nav link stretches a little less on mobile */
+    .navbar .nav-links a {
+        flex: 1 1 auto;
+        text-align: center;
+        min-width: 80px;
+    }
+
+    /* Profile moves below brand and links */
+    .navbar .profile {
+        flex: 0 0 auto;
+        order: 4;
+        margin-left: auto;
     }
 
     main {
@@ -224,5 +284,41 @@ main {
 
     .dashboard-grid {
         gap: 12px;
+    }
+
+    form .container {
+        flex-direction: column;
+        gap: 0px; 
+        height: auto; 
+        margin-left: 0; 
+    }
+
+    form .container > * {
+        flex: none;
+        width: 100%;
+    }
+
+}
+
+@media (max-width: 480px) {
+    /* Small screens: stack completely */
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .navbar .nav-links {
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .navbar .nav-links a {
+        flex: 1 1 100%;
+        margin: 4px 0;
+    }
+
+    .navbar .profile {
+        margin-left: 0;
+        margin-top: 8px;
     }
 }

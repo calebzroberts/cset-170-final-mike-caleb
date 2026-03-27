@@ -8,10 +8,14 @@
     <h2>Welcome Back!</h2>
     
     <form method="POST" class="secondary">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br>
+        <div class="container">
+            <input type="text" id="username" name="username" placeholder="Username" required><br>
+
+        </div>
+        <div class="container">
+            <input type="password" id="password" name="password" placeholder="Password" required><br>
+        </div>
+
         <div class="actions">
             <button type="submit" class="button-primary">Log In</button>
             <a href="/signup" class="button-outline">Don't have an account? Sign Up</a>
