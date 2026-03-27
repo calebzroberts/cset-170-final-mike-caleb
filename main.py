@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
 from sqlalchemy import create_engine, text
-import os
 
 app = Flask(__name__)
 
