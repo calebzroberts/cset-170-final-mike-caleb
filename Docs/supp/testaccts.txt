@@ -1,0 +1,40 @@
+Mister Sparkles
+ username: admin
+ password: re!p4SR
+
+Robert Johnson
+ username: rjohnson
+ password: passwordabc123
+
+Patricia Davis
+ username: pdavis
+ password: 111111dragon
+
+Michael Williams
+ username: mwilliams
+ password: princessqazwsx
+
+David Smith
+ username: dsmith
+ password: michael
+
+Richard Hernandez
+ username: rhernandez
+ password: 888888superman
+
+William Rodrigues
+ username: wrodrigues
+ password: superman
+
+James Martinez
+ username: jmartinez
+ password: qwerty123iloveyou
+
+Linda Jones
+ username: ljones
+ password: mustang
+
+Jennifer Garcia
+ username: jgarcia
+ password: dragon
+

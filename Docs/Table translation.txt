@@ -1,19 +1,19 @@
 Table: People
 	Username varchar(32) unique PK
 	Password varchar(64)
+	First_name varchar(32)
+	Last_name varchar(64)
 Table: Roles
 	Username varchar(32) unique PK FK(Person)
 	Admin Boolean default(FALSE), constraint(count(true) <= 1)
 Table: User
-	SSN int unique PK
+	SSN varchar(64) unique PK
 	Username unique FK(roles, people)
-	First_name varchar(32)
-	Last_name varchar(64)
 	Address varchar(256)
 	Phone int
+	Approved Boolean default(FALSE)
 Table: Account
 	Acct_Num int unique PK
-	SSN int unique FK(User)
-	Approved Boolean default(FALSE)
+	SSN varchar(64) unique FK(User)
 	Balance decimal(18, 2)
 
