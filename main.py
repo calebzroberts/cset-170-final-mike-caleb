@@ -33,5 +33,9 @@ def admin():
 def account():
     return render_template('account.html')
 
+@app.route('/transactions')
+def transactions():
+    return render_template('transactions.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
