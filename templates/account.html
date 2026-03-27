@@ -6,4 +6,52 @@
 <h1>My Account</h1>
 <p>Welcome to your account page. Here you can manage your profile.</p>
 
+<div class="account-grid">
+    <!-- Left: Account Info -->
+    <div class="card">
+        <h2>Account Balance</h2>
+        <p class="value">$12,345.67</p>
+        <p>
+            Account #: 
+            <span id="acct-num">**** **** **** 1234</span>
+            <button id="toggle-acct" class="button-outline">Show</button>
+        </p>
+    </div>
+
+    <!-- Right: User Info -->
+    <div class="card">
+        <button id="toggle-info" class="button-outline">Show Info</button>
+        <div id="user-info" style="margin-top:12px;">
+            <p>First Name: <span class="hidden">John</span></p>
+            <p>Last Name: <span class="hidden">Doe</span></p>
+            <p>SSN: <span class="hidden">123-45-6789</span></p>
+            <p>Address: <span class="hidden">123 Main St, Springfield, IL 62704</span></p>
+            <p>Email: <span class="hidden">john.doe@example.com</span></p>
+            <p>Phone: <span class="hidden">(555) 123-4567</span></p>
+            <p>Password: <span class="hidden">••••••••</span></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Account number toggle
+    const acctBtn = document.getElementById('toggle-acct');
+    const acctSpan = document.getElementById('acct-num');
+    let acctShown = false;
+    acctBtn.addEventListener('click', () => {
+        acctShown = !acctShown;
+        acctSpan.textContent = acctShown ? '1234 5678 9012 1234' : '**** **** **** 1234';
+        acctBtn.textContent = acctShown ? 'Hide' : 'Show';
+    });
+
+    // User info toggle
+    const infoBtn = document.getElementById('toggle-info');
+    const infoDiv = document.getElementById('user-info');
+    infoBtn.addEventListener('click', () => {
+        infoDiv.querySelectorAll('span').forEach(span => {
+            span.classList.toggle('hidden');
+        });
+        infoBtn.textContent = infoBtn.textContent === 'Show Info' ? 'Hide Info' : 'Show Info';
+    });
+</script>
 {% endblock %}
