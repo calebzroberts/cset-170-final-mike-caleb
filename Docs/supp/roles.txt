@@ -1,0 +1,11 @@
+username,is_admin
+admin,TRUE
+rjohnson,FALSE
+pdavis,FALSE
+mwilliams,FALSE
+dsmith,FALSE
+rhernandez,FALSE
+wrodrigues,FALSE
+jmartinez,FALSE
+ljones,FALSE
+jgarcia,FALSE
