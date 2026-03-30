@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from sqlalchemy import create_engine, text
 
 app = Flask(__name__)
@@ -6,6 +6,8 @@ app = Flask(__name__)
 # conn_str = "mysql://root:cset155@localhost/bankdb"
 # engine = create_engine(conn_str, echo=True)
 # conn = engine.connect()
+
+app.secret_key = 'CSET170SecretKey' 
 
 @app.route('/')
 def index():
