@@ -46,7 +46,13 @@ INTO TABLE roles
 FIELDS TERMINATED BY ',' 
 OPTIONALLY ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
-IGNORE 1 ROWS;
+IGNORE 1 ROWS
+(username, @is_admin_text)
+SET is_admin = CASE
+    WHEN UPPER(REPLACE(@is_admin_text, '\r', '')) = 'TRUE' THEN 1
+    WHEN UPPER(REPLACE(@is_admin_text, '\r', '')) = 'FALSE' THEN 0
+    ELSE NULL
+END;
 
 LOAD DATA LOCAL INFILE 'docs/supp/users.txt'
 INTO TABLE users
