@@ -21,5 +21,9 @@
             <a href="/signup" class="button-outline">Don't have an account? Sign Up</a>
         </div>
     </form>
+    {% if error != None %}
+    <p class="error-msg">{{ error }}</p>
+    {% endif %}
 </div>
+
 {% endblock %}

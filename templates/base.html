@@ -17,7 +17,9 @@
         <!-- Navigation Links -->
         <nav class="nav-links">
             <a href="/">Main</a>
+            {% if is_admin %}
             <a href="/admin">Admin</a>
+            {% endif %}
             <a href="/account">My Account</a>
             <a href="/transfer">Transfer</a>
         </nav>

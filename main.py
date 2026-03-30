@@ -42,14 +42,14 @@ def login():
     if request.method == 'POST':
         form = request.form
         username = form.get("username")
-        stored_pass = conn.execute(text(f"SELECT password FROM people WHERE username = :username"),
+        stored_pass = conn.execute(text("SELECT password FROM people WHERE username = :username"),
                                    {"username": username}).first()[0]
 
         if hash_from_str(form.get("password")) == stored_pass:
-            
             session['logged_in'] = True
             session['user_id'] = username
-
+            if is_admin(username):
+                session['is_admin'] = True
             return redirect(url_for('account'))
         else:
             login_error = "Username or Password Incorrect!"
@@ -67,6 +67,9 @@ def admin():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     
+    if not session.get('is_admin'):
+        return "Unauthorized", 403
+
     users = get_users() 
     return render_template('admin.html', users=users)
 
@@ -106,7 +109,9 @@ def logout():
 
 @app.context_processor
 def inject_user():
-    return dict(logged_in=session.get('logged_in', False))
+    return dict(
+        logged_in=session.get('logged_in', False),
+        is_admin=session.get('is_admin', False))
 
 
 # ====== HELPER FUNCTIONS ======
@@ -169,6 +174,12 @@ def create_user(data):
     # Fetch the newly inserted user
     return get_user(data['ssn'])
 
+def is_admin(username):
+    result = bool(conn.execute(
+        text("SELECT is_admin FROM roles WHERE username = :username"),
+        {"username": username}
+    ).first()[0])
+    return result
 
 def create_transaction(ssn, amount, txn_type):
     """
