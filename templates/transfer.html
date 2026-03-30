@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Make A Transfer{% endblock %}
+
+{% block content %}
+<h1>Make A Transfer</h1>
+
+<div class="card">
+    <h2>Send or receive money.</h2>
+
+    <form method="POST" class="secondary">
+
+        <!-- Transaction Type -->
+        <div class="container select-wrapper">
+            <select name="type" required>
+                <option value="">Transaction Type</option>
+                <option value="debit">Debit (Send)</option>
+                <option value="credit">Credit (Receive)</option>
+            </select>
+        </div>
+
+        <p>From</p>
+
+        <!-- From Type -->
+        <div class="container select-wrapper">
+            <select id="fromType" name="from_type" required>
+                <option value="">From Type</option>
+                <option value="card">Card</option>
+                <option value="account">Account</option>
+            </select>
+        </div>
+
+        <!-- From Card Fields -->
+        <div id="fromCardFields" class="container" style="display:none;">
+            <input type="text" name="from_card_number" placeholder="Card Number">
+            <input type="text" name="from_card_exp" placeholder="MM/YY">
+            <input type="text" name="from_card_cvv" placeholder="CVV">
+        </div>
+
+        <!-- From Account -->
+        <div id="fromAccountField" class="container" style="display:none;">
+            <input type="text" name="from_account" placeholder="From Account Number">
+        </div>
+
+        <p>To</p>
+
+        <!-- To Type -->
+        <div class="container select-wrapper">
+            <select id="toType" name="to_type" required>
+                <option value="">To Type</option>
+                <option value="card">Card</option>
+                <option value="account">Account</option>
+            </select>
+        </div>
+
+        <!-- To Card Fields -->
+        <div id="toCardFields" class="container" style="display:none;">
+            <input type="text" name="to_card_number" placeholder="Card Number">
+            <input type="text" name="to_card_exp" placeholder="MM/YY">
+            <input type="text" name="to_card_cvv" placeholder="CVV">
+        </div>
+
+        <!-- To Account -->
+        <div id="toAccountField" class="container" style="display:none;">
+            <input type="text" name="to_account" placeholder="To Account Number">
+        </div>
+
+        <p>Amount</p>
+
+        <!-- Amount -->
+        <div class="container">
+            <input type="number" step="0.01" name="amount" placeholder="Amount" required>
+        </div>
+
+        <!-- Submit -->
+        <div class="actions">
+            <button type="submit" class="button-primary">Send / Receive</button>
+        </div>
+
+    </form>
+</div>
+
+<!-- Simple JS to toggle fields -->
+<script>
+function toggleFields(selectId, cardId, accountId) {
+    const type = document.getElementById(selectId).value;
+    document.getElementById(cardId).style.display = type === 'card' ? 'flex' : 'none';
+    document.getElementById(accountId).style.display = type === 'account' ? 'flex' : 'none';
+}
+
+document.getElementById('fromType').addEventListener('change', () => {
+    toggleFields('fromType', 'fromCardFields', 'fromAccountField');
+});
+
+document.getElementById('toType').addEventListener('change', () => {
+    toggleFields('toType', 'toCardFields', 'toAccountField');
+});
+</script>
+{% endblock %}

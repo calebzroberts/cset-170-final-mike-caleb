@@ -6,4 +6,25 @@
 <h1>Transactions</h1>
 <p>Welcome to your transactions page. Here you can view your transaction history.</p>
 <!-- Add transaction-specific content here -->
+
+<div class="transaction-list">
+    {% set mock_transactions = [
+        {"id": 1, "amount": "100.00", "type": "Deposit", "date": "2026-03-01"},
+        {"id": 2, "amount": "50.00", "type": "Withdrawal", "date": "2026-03-02"},
+        {"id": 3, "amount": "200.00", "type": "Deposit", "date": "2026-03-03"},
+        {"id": 4, "amount": "75.00", "type": "Withdrawal", "date": "2026-03-04"},
+        {"id": 5, "amount": "150.00", "type": "Deposit", "date": "2026-03-05"},
+        {"id": 6, "amount": "125.00", "type": "Withdrawal", "date": "2026-03-06"}
+    ] %}
+
+    {% for transaction in mock_transactions %}
+    <div class="transaction-card">
+        <p><strong>Transaction ID: {{ transaction.id }}</strong></p>
+        <p>Amount: ${{ transaction.amount }}</p>
+        <p>Type: {{ transaction.type }}</p>
+        <p>Date: {{ transaction.date }}</p>
+    </div>
+    {% endfor %}
+</div>
+
 {% endblock %}
