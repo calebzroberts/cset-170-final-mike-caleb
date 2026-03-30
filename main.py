@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
-from sqlalchemy import Column, Integer, String, Float, DateTime, Enum, ForeignKey, create_engine, Connection
+from sqlalchemy import Column, Integer, String, Float, DateTime, Enum, ForeignKey, create_engine, Connection, text
 from sqlalchemy.orm import sessionmaker
 
 app = Flask(__name__)
