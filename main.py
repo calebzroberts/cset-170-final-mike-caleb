@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from sqlalchemy import Column, Integer, String, Float, DateTime, Enum, ForeignKey, create_engine, Connection, text
 from sqlalchemy.orm import sessionmaker
+import hashlib as hash
 
 app = Flask(__name__)
 
@@ -37,12 +38,22 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    login_error = None
     if request.method == 'POST':
+        form = request.form
+        username = form.get("username")
+        stored_pass = conn.execute(text(f"SELECT password FROM people WHERE username = :username"),
+                                   {"username": username}).first()[0]
 
-        session['logged_in'] = True
+        if hash_from_str(form.get("password")) == stored_pass:
+            
+            session['logged_in'] = True
+            session['user_id'] = username
 
-        return redirect(url_for('account'))
-    return render_template('login.html')
+            return redirect(url_for('account'))
+        else:
+            login_error = "Username or Password Incorrect!"
+    return render_template('login.html', error = login_error)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -64,7 +75,7 @@ def account():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     
-    user_id = "username"
+    user_id = session.get('user_id')
     user = get_user(user_id)  
     return render_template('account.html', user=user)
 
@@ -99,6 +110,10 @@ def inject_user():
 
 
 # ====== HELPER FUNCTIONS ======
+
+def hash_from_str(inp_str:str) -> str:
+    pepper = hash.sha256("sparkles".encode()).hexdigest()
+    return hash.sha256((inp_str+pepper).encode()).hexdigest()
 
 def get_user(username):
     """Fetch a single user by username, including person info and role"""
