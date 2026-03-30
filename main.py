@@ -1,12 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
-from sqlalchemy import Column, Integer, String, Float, DateTime, Enum, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, DateTime, Enum, ForeignKey, create_engine
+from sqlalchemy.orm import sessionmaker
 
 app = Flask(__name__)
-
-
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 
 # ====== MODELS ======
