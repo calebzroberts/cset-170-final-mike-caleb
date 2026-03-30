@@ -38,11 +38,8 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # Here you would normally check username/password
-        user = {"id": 1, "username": "johndoe"}  # Mock user for now
 
         session['logged_in'] = True
-        session['user_id'] = user['id']  # <-- store user ID for DB queries
 
         return redirect(url_for('account'))
     return render_template('login.html')
@@ -59,7 +56,7 @@ def admin():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     
-    users = get_users()  # Placeholder function to fetch all users from DB
+    users = get_users() 
     return render_template('admin.html', users=users)
 
 @app.route('/account')
@@ -68,17 +65,17 @@ def account():
         return redirect(url_for('login'))
     
     user_id = session.get('user_id')
-    user = get_user(user_id)  # Placeholder function to fetch user details from DB
+    user = get_user(user_id)  
     return render_template('account.html', user=user)
 
-@app.route('/transactions')
-def transactions():
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
+# @app.route('/transactions')
+# def transactions():
+#     if not session.get('logged_in'):
+#         return redirect(url_for('login'))
 
-    user_id = session.get('user_id')
-    transactions = get_user_transactions(user_id)
-    return render_template('transactions.html', transactions=transactions)
+#     user_id = session.get('user_id')
+#     transactions = get_user_transactions(user_id)
+#     return render_template('transactions.html', transactions=transactions)
 
 @app.route('/transfer', methods=['GET', 'POST'])
 def transfer():
@@ -103,31 +100,113 @@ def inject_user():
 
 # ====== HELPER FUNCTIONS ======
 
-def get_user(user_id):
-    # Placeholder: will query database once ready
-    return db_session.query(User).filter(User.id == user_id).first()
+def get_user(ssn):
+    """Fetch a single user by SSN, including person info and role"""
+    stmt = text("""
+        SELECT u.ssn, u.username, u.address, u.phone, u.approved,
+               p.first_name, p.last_name,
+               r.is_admin
+        FROM users u
+        JOIN people p ON u.username = p.username
+        LEFT JOIN roles r ON u.username = r.username
+        WHERE u.ssn = :ssn
+    """)
+    result = conn.execute(stmt, {"ssn": ssn}).mappings().first()
+    return dict(result) if result else None
 
-def get_user_transactions(user_id):
-    user = db_session.query(User).filter(User.id == user_id).first()
-    if not user or not user.accounts:
-        return []
-    # Return all transactions for first account (simplified)
-    return user.accounts[0].transactions
 
 def get_users():
-    return db_session.query(User).all()
+    """Fetch all unapproved users"""
+    stmt = text("""
+        SELECT u.ssn, u.username, u.address, u.phone, u.approved,
+               p.first_name, p.last_name,
+               r.is_admin
+        FROM users u
+        JOIN people p ON u.username = p.username
+        LEFT JOIN roles r ON u.username = r.username
+        WHERE u.approved = FALSE
+        ORDER BY u.ssn ASC
+    """)
+    results = conn.execute(stmt).mappings().all()
+    return [dict(user) for user in results]
+
 
 def create_user(data):
-    user = User(**data)
-    db_session.add(user)
-    db_session.commit()
-    return user
+    """
+    Insert a new person, role (optional), and user.
+    `data` must include: username, password, first_name, last_name, address, phone
+    """
+    # Insert person
+    stmt_person = text("""
+        INSERT INTO people (username, password, first_name, last_name)
+        VALUES (:username, :password, :first_name, :last_name)
+    """)
+    conn.execute(stmt_person, data)
 
-def create_transaction(account_id, amount, txn_type):
-    txn = Transaction(account_id=account_id, amount=amount, type=txn_type)
-    db_session.add(txn)
-    db_session.commit()
-    return txn
+    # Insert user
+    stmt_user = text("""
+        INSERT INTO users (ssn, username, address, phone, approved)
+        VALUES (:ssn, :username, :address, :phone, FALSE)
+    """)
+    conn.execute(stmt_user, data)
+    conn.commit()
+
+    # Fetch the newly inserted user
+    return get_user(data['ssn'])
+
+
+def create_transaction(ssn, amount, txn_type):
+    """
+    Insert a transaction for a user's account.
+    `txn_type` can be 'deposit' or 'withdrawal' or similar.
+    """
+    # Get user's account
+    acct_stmt = text("SELECT acct_num FROM accounts WHERE ssn = :ssn LIMIT 1")
+    account = conn.execute(acct_stmt, {"ssn": ssn}).mappings().first()
+    if not account:
+        return None  # No account exists
+
+    acct_num = account['acct_num']
+
+    # Insert transaction
+    txn_stmt = text("""
+        INSERT INTO transactions (account_id, amount, type, date)
+        VALUES (:acct_num, :amount, :txn_type, NOW())
+    """)
+    conn.execute(txn_stmt, {"acct_num": acct_num, "amount": amount, "txn_type": txn_type})
+    conn.commit()
+
+    # Fetch the inserted transaction (latest for account)
+    fetch_stmt = text("""
+        SELECT id, account_id, amount, type, date
+        FROM transactions
+        WHERE account_id = :acct_num
+        ORDER BY id DESC
+        LIMIT 1
+    """)
+    txn = conn.execute(fetch_stmt, {"acct_num": acct_num}).mappings().first()
+    return dict(txn) if txn else None
+
+# def get_user_transactions(user_id):
+#     # Get first account for the user
+#     stmt = text("SELECT id FROM accounts WHERE user_id = :uid LIMIT 1")
+#     account = conn.execute(stmt, {"uid": user_id}).mappings().first()
+#     if not account:
+#         return []
+
+#     account_id = account['id']
+
+#     # Get transactions for that account
+#     txn_stmt = text("""
+#         SELECT id, amount, type, date
+#         FROM transactions
+#         WHERE account_id = :aid
+#         ORDER BY date DESC
+#     """)
+#     transactions = conn.execute(txn_stmt, {"aid": account_id}).mappings().all()
+#     return [dict(txn) for txn in transactions]
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
