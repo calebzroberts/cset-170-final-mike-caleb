@@ -64,7 +64,7 @@ def account():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     
-    user_id = session.get('user_id')
+    user_id = "username"
     user = get_user(user_id)  
     return render_template('account.html', user=user)
 
@@ -100,8 +100,8 @@ def inject_user():
 
 # ====== HELPER FUNCTIONS ======
 
-def get_user(ssn):
-    """Fetch a single user by SSN, including person info and role"""
+def get_user(username):
+    """Fetch a single user by username, including person info and role"""
     stmt = text("""
         SELECT u.ssn, u.username, u.address, u.phone, u.approved,
                p.first_name, p.last_name,
@@ -109,9 +109,9 @@ def get_user(ssn):
         FROM users u
         JOIN people p ON u.username = p.username
         LEFT JOIN roles r ON u.username = r.username
-        WHERE u.ssn = :ssn
+        WHERE u.username = :username
     """)
-    result = conn.execute(stmt, {"ssn": ssn}).mappings().first()
+    result = conn.execute(stmt, {"username": username}).mappings().first()
     return dict(result) if result else None
 
 
