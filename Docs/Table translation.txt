@@ -1,19 +1,21 @@
 Table: People
 	Username varchar(32) unique PK
 	Password varchar(64)
-	First_name varchar(32)
-	Last_name varchar(64)
 Table: Roles
 	Username varchar(32) unique PK FK(Person)
 	Admin Boolean default(FALSE), constraint(count(true) <= 1)
 Table: User
 	SSN varchar(64) unique PK
 	Username unique FK(roles, people)
+	First_name varchar(32)
+	Last_name varchar(64)
 	Address varchar(256)
 	Phone int
-	Approved Boolean default(FALSE)
 Table: Account
 	Acct_Num int unique PK
 	SSN varchar(64) unique FK(User)
+	Approved Boolean default(FALSE)
 	Balance decimal(18, 2)
 
+['123456', 'password', '12345678912345678', '12345678', '12345', '123456789', 'qwertyqwerty', 'abc123', 'qwerty', 'passwordabc123', 'football', '1234567monkey', 'monkey', '111111', '123456781234567', 'letmein', '1234', '1234567890', '1234567', '12345letmein', 'dragon', 'baseball', 
+'sunshine', 'iloveyoutrustno1', 'iloveyou', 'princess', '111111dragon', 'adobe123[a]', '123123baseball', '123123', 'welcome', 'login', 'admin', 'abc123111111', 'trustno1', 'qwerty123iloveyou', 'solo', '1q2w3e4rmaster', '666666', 'adminsunshine', 'master', 'photoshop[a]', '1qaz2wsx', 'qwertyuiopashley', 'mustang', '121212', 'starwars', '654321bailey', 'access', 'flower', '555555passw0rd', 'shadow', 'passw0rd', 'lovelyshadow', 'ashley', '654321', '7777777123123', 'michael', '!@#$%^&*', 'welcome654321', 'jesus', 'password1', 'superman', 'hello', 'charlie', '888888superman', '696969', 'qwertyuiop', 'hottie', 'freedom', 'aa123456', 'princessqazwsx', 'ninja', 'azerty', 'loveme', 'whatever', 'donald', 'dragonmichael', 'batman', 'zaq1zaq1', 'qazwsx', 'password1Football', '000000', 'qwerty123', '23123', '987654321', 'mynoob', '123321', '18atcskd2w', '7777777', '1q2w3e4r', '555555', '3rjs1la7qe', 'google', '1q2w3e4r5t', '123qwe', 'zxcvbnm', '1q2w3e', '1111111', 'Iloveyou', 'Qwertyuiop', '123', 'Monkey', 'Dragon']
