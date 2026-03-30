@@ -1,16 +1,28 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
-from sqlalchemy import Column, Integer, String, Float, DateTime, Enum, ForeignKey, create_engine
+from sqlalchemy import Column, Integer, String, Float, DateTime, Enum, ForeignKey, create_engine, Connection
 from sqlalchemy.orm import sessionmaker
 
 app = Flask(__name__)
 
 
-
 # ====== DATABASE SETUP ======
 
-
-
+conn_str = "mysql://root:cset155@localhost/"
+db_name = "bankdb"
+server_engine = create_engine(conn_str, echo=True, connect_args={"local_infile":1})
+conn = server_engine.connect()
+result = conn.execute(text("SHOW DATABASES"))
+databases = [row[0] for row in result.fetchall()]
+if db_name not in databases:
+    with open("scripts/sql/schema.sql") as f:
+        sql = f.read()
+    statements = [statement.strip() for statement in sql.split(';') if statement.strip()]
+    with server_engine.begin() as transaction:
+        for statement in statements:
+            transaction.execute(text(statement))
+engine = create_engine(conn_str+db_name, echo=True)
+conn = engine.connect()
 
 app.secret_key = 'CSET170SecretKey' 
 
