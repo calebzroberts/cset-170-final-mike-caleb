@@ -6,55 +6,10 @@ from sqlalchemy.orm import sessionmaker
 app = Flask(__name__)
 
 
-# ====== MODELS ======
-
-Base = declarative_base()
-
-class User(Base):
-    __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    first_name = Column(String(50))
-    last_name = Column(String(50))
-    email = Column(String(100), unique=True)
-    username = Column(String(50), unique=True)
-    password = Column(String(255))
-    phone_number = Column(String(20))
-    street_address = Column(String(255))
-    city = Column(String(50))
-    state = Column(String(50))
-    zip_code = Column(String(20))
-
-    accounts = relationship("Account", back_populates="user")
-
-
-class Account(Base):
-    __tablename__ = 'accounts'
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    balance = Column(Float, default=0.0)
-    account_number = Column(String(20), unique=True)
-
-    user = relationship("User", back_populates="accounts")
-    transactions = relationship("Transaction", back_populates="account")
-
-
-class Transaction(Base):
-    __tablename__ = 'transactions'
-    id = Column(Integer, primary_key=True)
-    account_id = Column(Integer, ForeignKey('accounts.id'))
-    amount = Column(Float)
-    type = Column(Enum('debit', 'credit', name='transaction_type'))
-    date = Column(DateTime)
-
-    account = relationship("Account", back_populates="transactions")
-
 
 # ====== DATABASE SETUP ======
 
-conn_str = "mysql://root:cset155@localhost/bankdb"
-engine = create_engine(conn_str, echo=True)
-Session = sessionmaker(bind=engine)
-db_session = Session()
+
 
 
 app.secret_key = 'CSET170SecretKey' 
