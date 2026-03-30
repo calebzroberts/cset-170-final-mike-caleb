@@ -23,6 +23,8 @@ if db_name not in databases:
             transaction.execute(text(statement))
 engine = create_engine(conn_str+db_name, echo=True)
 conn = engine.connect()
+Session = sessionmaker(bind=engine)
+db_session = Session()
 
 app.secret_key = 'CSET170SecretKey' 
 
