@@ -151,6 +151,7 @@ def get_users():
     return [dict(user) for user in results]
 
 
+
 def create_user(data):
     """
     Insert a new person, role (optional), and user.
