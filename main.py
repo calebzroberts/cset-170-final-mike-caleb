@@ -3,6 +3,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from sqlalchemy import Column, Integer, String, Float, DateTime, Enum, ForeignKey, create_engine, Connection, text
 from sqlalchemy.orm import sessionmaker
 import hashlib as hash
+import random
 
 app = Flask(__name__)
 
@@ -107,10 +108,28 @@ def approve_user():
     username = request.form.get("username")
     if not username:
         return "Bad request", 400
-
+    
     # Update the database
     stmt = text("UPDATE users SET approved = TRUE WHERE username = :username")
     conn.execute(stmt, {"username": username})
+    conn.commit()
+
+    def generate_acct_num():
+        return random.randint(11111111, 99999999)
+    acct_num = generate_acct_num()
+    rslt = conn.execute(text("SELECT acct_num FROM accounts")).all()
+    while acct_num in rslt:
+        acct_num = generate_acct_num()
+
+    ssn = get_user(username).get("ssn")
+
+    data = {"acct_num": acct_num, "ssn": ssn}
+    
+    stmt = text("""
+                INSERT INTO accounts (acct_num, ssn, balance)
+                VALUES (:acct_num, :ssn, 0.00)
+                """)
+    conn.execute(stmt, data)
     conn.commit()
 
     return redirect(url_for('admin'))
