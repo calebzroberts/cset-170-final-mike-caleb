@@ -10,24 +10,16 @@
     
     {% for user in users %}
     <div class="user-card">
-        <p><strong>{{ user.name }}</strong></p>
-        <p>{{ user.email }}</p>
+        <p><strong>{{ user.username }}</strong></p>
+        <p>{{ user.phone }}</p>
         <div class="actions">
-            <button class="button-primary approve-btn">Approve</button>
-            <button class="button-outline reject-btn">Reject</button>
+            <form method="POST" action="{{ url_for('approve_user') }}" style="display:inline">
+                <input type="hidden" name="username" value="{{ user.username }}">
+                <button type="submit" class="button-primary">Approve</button>
+            </form>
         </div>
     </div>
     {% endfor %}
 </div>
-
-<script>
-    // Select all approve/reject buttons
-    document.querySelectorAll('.approve-btn, .reject-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const card = this.closest('.user-card'); // find the card
-            card.remove(); // remove it from the DOM
-        });
-    });
-</script>
 
 {% endblock %}
