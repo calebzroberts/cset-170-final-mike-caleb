@@ -11,17 +11,21 @@
         <p>Personal Information</p>
 
         <div class="container">
-            <input type="text" id="first-name" name="first_name" placeholder="First Name" required><br>
+            <input type="text" id="first_name" name="first_name" placeholder="First Name" required><br>
         </div>
         
         <div class="container">
-            <input type="text" id="last-name" name="last_name" placeholder="Last Name" required><br>
+            <input type="text" id="last_name" name="last_name" placeholder="Last Name" required><br>
+        </div>
+
+        <div class="container">
+            <input type="text" id="ssn" name="ssn" placeholder="Social Sec #" required><br>
         </div>
 
         <p>Address Information</p>
         
         <div class="container">
-            <input type="text" id="street-address" name="street_address" placeholder="Street Address" required><br>
+            <input type="text" id="street_address" name="street_address" placeholder="Street Address" required><br>
         </div>
 
         <div class="container"> 
@@ -32,12 +36,12 @@
         <div class="container">
             <input class="sixty" type="text" id="state" name="state" placeholder="State" required><br>
 
-            <input class="forty" type="text" id="zip-code" name="zip_code" placeholder="Zip Code" required><br>
+            <input class="forty" type="text" id="zip_code" name="zip_code" placeholder="Zip Code" required><br>
         </div>
     
         <p>Contact Information</p>
         <div class="container">
-            <input class= "hundred" type="text" id="phone-number" name="phone_number" placeholder="Phone Number" required><br>
+            <input class= "hundred" type="text" id="phone_number" name="phone_number" placeholder="Phone Number" required><br>
 
         </div>
 
@@ -57,5 +61,8 @@
             <a href="/login" class="button-outline">Already have an account? Log In</a>
         </div>
     </form>
+    {% if error != None %}
+    <p>{{ error }}</p>
+    {% endif %}
 </div>
 {% endblock %}

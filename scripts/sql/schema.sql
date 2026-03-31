@@ -59,7 +59,13 @@ INTO TABLE users
 FIELDS TERMINATED BY ',' 
 OPTIONALLY ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
-IGNORE 1 ROWS;
+IGNORE 1 ROWS
+(ssn, username, address, phone, @approved_text)
+SET approved = CASE
+    WHEN UPPER(REPLACE(@approved_text, '\r', '')) = 'TRUE' THEN 1
+    WHEN UPPER(REPLACE(@approved_text, '\r', '')) = 'FALSE' THEN 0
+    ELSE NULL
+END;
 
 LOAD DATA LOCAL INFILE 'docs/supp/accounts.txt'
 INTO TABLE accounts

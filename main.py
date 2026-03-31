@@ -57,10 +57,27 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    signup_error = None
     if request.method == 'POST':
-        # For now, just redirect to login after "signup"
-        return redirect(url_for('login'))
-    return render_template('signup.html')
+        form = request.form
+        if all(form.values()):
+            user = {
+                "username":form.get("username"),
+                "password":hash_from_str(form.get("password")),
+                "first_name":form.get("first_name"),
+                "last_name":form.get("last_name"),
+                "address":str("\"" + form.get("street_address") + " "
+                              + form.get("city")+", "
+                              + form.get("state") + " "
+                              + form.get("zip_code") + "\""),
+                "phone":form.get("phone_numer"),
+                "ssn":form.get("ssn"),
+            }
+            create_user(user)
+            return redirect(url_for('login'))
+        else:
+            signup_error = "Please complete all fields."
+    return render_template('signup.html', error = signup_error)
 
 @app.route('/admin')
 def admin():
@@ -152,7 +169,7 @@ def get_users():
 
 
 
-def create_user(data):
+def create_user(data:dict):
     """
     Insert a new person, role (optional), and user.
     `data` must include: username, password, first_name, last_name, address, phone
@@ -173,7 +190,7 @@ def create_user(data):
     conn.commit()
 
     # Fetch the newly inserted user
-    return get_user(data['ssn'])
+    return get_user(data['username'])
 
 def is_admin(username):
     result = bool(conn.execute(
