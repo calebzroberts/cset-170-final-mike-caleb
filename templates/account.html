@@ -45,11 +45,14 @@
     const acctBtn = document.getElementById('toggle-acct');
     const acctSpan = document.getElementById('acct-num');
     let acctShown = false;
-    acctBtn.addEventListener('click', () => {
-        acctShown = !acctShown;
-        acctSpan.textContent = acctShown ? '{{ account.acct_num }}' : '************';
-        acctBtn.textContent = acctShown ? 'Hide' : 'Show';
-    });
+    if (acctBtn !== null) {
+
+        acctBtn.addEventListener('click', () => {
+            acctShown = !acctShown;
+            acctSpan.textContent = acctShown ? '{{ account.acct_num }}' : '************';
+            acctBtn.textContent = acctShown ? 'Hide' : 'Show';
+        });
+    }
 
     // User info toggle
     const infoBtn = document.getElementById('toggle-info');
