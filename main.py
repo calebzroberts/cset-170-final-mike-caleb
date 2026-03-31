@@ -59,6 +59,7 @@ def login():
             session['user_id'] = username
             if is_admin(username):
                 session['is_admin'] = True
+                return redirect(url_for('admin'))
             return redirect(url_for('account'))
         else:
             login_error = "Username or Password Incorrect!"
