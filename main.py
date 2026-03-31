@@ -79,8 +79,8 @@ def signup():
                               + form.get("city")+", "
                               + form.get("state") + " "
                               + form.get("zip_code") + "\""),
-                "phone":form.get("phone_numer"),
-                "ssn":form.get("ssn"),
+                "phone":f"\"{form.get("phone_numer")}\"",
+                "ssn":hash_from_str(form.get("ssn")),
             }
             create_user(user)
             return redirect(url_for('login'))
@@ -230,6 +230,13 @@ def create_user(data:dict):
     stmt_person = text("""
         INSERT INTO people (username, password, first_name, last_name)
         VALUES (:username, :password, :first_name, :last_name)
+    """)
+    conn.execute(stmt_person, data)
+
+    # Set role
+    stmt_person = text("""
+        INSERT INTO roles (username, is_admin)
+        VALUES (:username, FALSE)
     """)
     conn.execute(stmt_person, data)
 
