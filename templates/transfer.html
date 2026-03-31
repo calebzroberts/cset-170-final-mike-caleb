@@ -8,11 +8,14 @@
 <div class="card">
     <h2>Send or receive money.</h2>
 
+    {% if error %}
+        <p style="color: red; font-weight: bold;">{{ error }}</p>
+    {% endif %}
     <form method="POST" class="secondary">
 
         <!-- Transaction Type -->
         <div class="container select-wrapper">
-            <select name="type" required>
+            <select id="txnType" name="type" required>
                 <option value="">Transaction Type</option>
                 <option value="debit">Debit (Send)</option>
                 <option value="credit">Credit (Receive)</option>
@@ -39,7 +42,7 @@
 
         <!-- From Account -->
         <div id="fromAccountField" class="container" style="display:none;">
-            <input type="text" name="from_account" placeholder="From Account Number">
+            <input type="text" id="fromAccountInput" name="from_account" placeholder="From Account Number">
         </div>
 
         <p>To</p>
@@ -62,7 +65,7 @@
 
         <!-- To Account -->
         <div id="toAccountField" class="container" style="display:none;">
-            <input type="text" name="to_account" placeholder="To Account Number">
+            <input type="text" id="toAccountInput" name="to_account" placeholder="To Account Number">
         </div>
 
         <p>Amount</p>
@@ -82,18 +85,53 @@
 
 <!-- Simple JS to toggle fields -->
 <script>
-function toggleFields(selectId, cardId, accountId) {
-    const type = document.getElementById(selectId).value;
-    document.getElementById(cardId).style.display = type === 'card' ? 'flex' : 'none';
-    document.getElementById(accountId).style.display = type === 'account' ? 'flex' : 'none';
-}
+    const userAcct = "{{ user_acct_num }}";
+    const txnType = document.getElementById('txnType');
+    const fromType = document.getElementById('fromType');
+    const fromAccountInput = document.getElementById('fromAccountInput');
+    const toAccountInput = document.getElementById('toAccountInput');
 
-document.getElementById('fromType').addEventListener('change', () => {
-    toggleFields('fromType', 'fromCardFields', 'fromAccountField');
-});
+    const fromCardDiv = document.getElementById('fromCardFields');
+    const fromAcctDiv = document.getElementById('fromAccountField');
 
-document.getElementById('toType').addEventListener('change', () => {
-    toggleFields('toType', 'toCardFields', 'toAccountField');
-});
+    function updateVisibility() {
+        const type = txnType.value;
+        const fType = fromType.value;
+
+        // Show/Hide "From" inputs based on selection
+        fromCardDiv.style.display = fType === 'card' ? 'flex' : 'none';
+        fromAcctDiv.style.display = fType === 'account' ? 'flex' : 'none';
+        
+        // Always show "To" account field
+        document.getElementById('toAccountField').style.display = 'flex';
+
+        if (type === 'debit') {
+            // Force the "From" dropdown to Account and hide the option to change it
+            fromType.value = "account";
+            fromType.disabled = true; 
+            
+            // Ensure the account input box is visible and autofilled
+            fromAcctDiv.style.display = 'flex'; 
+            fromAccountInput.value = userAcct;
+            fromAccountInput.readOnly = true;
+            
+            // Let the user type the destination
+            toAccountInput.value = "";
+            toAccountInput.readOnly = false;
+        } else if (type === 'credit') {
+            fromType.disabled = false;
+            fromAccountInput.readOnly = false;
+
+            // Autofill "To" as User and lock it
+            toAccountInput.value = userAcct;
+            toAccountInput.readOnly = true;
+        }
+    }
+
+    txnType.addEventListener('change', updateVisibility);
+    fromType.addEventListener('change', updateVisibility);
+
+    // Initialize UI on page load
+    updateVisibility();
 </script>
 {% endblock %}

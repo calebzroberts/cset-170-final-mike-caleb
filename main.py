@@ -178,11 +178,50 @@ def transfer():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     
+    user_id = session.get('user_id')
+    user_account = get_account_with_approval(user_id)
+    error = None
+
     if request.method == 'POST':
-        # For now, just redirect to login after "signup"
-        return redirect(url_for('transactions'))
+        txn_category = request.form.get("type") # 'debit' or 'credit'
+        from_acct = request.form.get("from_account")
+        to_acct = request.form.get("to_account")
+        amount = float(request.form.get("amount") or 0)
+        from_type = request.form.get("from_type")
+
+        # FIX: If Debit was selected, 'from_type' was disabled and didn't submit.
+        # We force it to 'account' here so the subtraction logic runs.
+        if txn_category == 'debit':
+            from_type = 'account'
+
+        # Validation
+        from_exists = conn.execute(text("SELECT 1 FROM accounts WHERE acct_num = :a"), {"a": from_acct}).first() if from_type == "account" else True
+        to_exists = conn.execute(text("SELECT 1 FROM accounts WHERE acct_num = :a"), {"a": to_acct}).first()
+
+        if not from_exists:
+            error = "Source account number not found."
+        elif not to_exists:
+            error = "Destination account number not found."
+        else:
+            # 1. Deduct from 'From' account (only if it's an internal bank account)
+            if from_type == "account":
+                conn.execute(
+                    text("UPDATE accounts SET balance = balance - :amount WHERE acct_num = :acct"),
+                    {"amount": amount, "acct": from_acct}
+                )
+            
+            # 2. Add to 'To' account
+            conn.execute(
+                text("UPDATE accounts SET balance = balance + :amount WHERE acct_num = :acct"),
+                {"amount": amount, "acct": to_acct}
+            )
+            
+            conn.commit()
+            return redirect(url_for('account'))
     
-    return render_template('transfer.html')
+    return render_template('transfer.html', 
+                           user_acct_num=user_account['acct_num'] if user_account else "",
+                           error=error)
 
 @app.route('/logout')
 def logout():
