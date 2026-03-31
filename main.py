@@ -77,11 +77,11 @@ def signup():
                 "password":hash_from_str(form.get("password")),
                 "first_name":form.get("first_name"),
                 "last_name":form.get("last_name"),
-                "address":str("\"" + form.get("street_address") + " "
+                "address":str(form.get("street_address") + " "
                               + form.get("city")+", "
                               + form.get("state") + " "
-                              + form.get("zip_code") + "\""),
-                "phone":f"\"{form.get("phone_numer")}\"",
+                              + form.get("zip_code")),
+                "phone":form.get("phone_number"),
                 "ssn":hash_from_str(form.get("ssn")),
             }
             create_user(user)
