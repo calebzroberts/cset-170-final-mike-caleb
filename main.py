@@ -34,7 +34,16 @@ app.secret_key = 'CSET170SecretKey'
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    logged_in = session.get('logged_in')
+
+    is_admin1=session.get('is_admin', False)
+
+    is_admin2 = is_admin(session.get('user_id')) if logged_in else False
+
+    if is_admin1 == True and is_admin2 == True:
+        return render_template('index.html', logged_in=logged_in, is_admin = is_admin1)
+    
+    return render_template('index.html', logged_in=logged_in, is_admin = False)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -90,14 +99,50 @@ def admin():
     users = get_users() 
     return render_template('admin.html', users=users)
 
+@app.route('/admin/approve', methods=['POST'])
+def approve_user():
+    if not session.get('logged_in') or not session.get('is_admin'):
+        return "Unauthorized", 403
+
+    username = request.form.get("username")
+    if not username:
+        return "Bad request", 400
+
+    # Update the database
+    stmt = text("UPDATE users SET approved = TRUE WHERE username = :username")
+    conn.execute(stmt, {"username": username})
+    conn.commit()
+
+    return redirect(url_for('admin'))
+
 @app.route('/account')
 def account():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     
     user_id = session.get('user_id')
-    user = get_user(user_id)  
-    return render_template('account.html', user=user)
+    user = get_user(user_id)
+    account = get_account_with_approval(user_id)
+
+    approved = account['approved'] if account else False
+
+    return render_template(
+        'account.html',
+        user=user,
+        account=account,
+        approved=approved
+)
+
+@app.route('/reset-db', methods=['POST'])
+def reset_db():
+    if not session.get('logged_in') or not session.get('is_admin'):
+        return "Unauthorized", 403
+
+    # Drop the database
+    conn.execute(text("DROP DATABASE IF EXISTS bankdb"))
+    conn.commit()
+    return "Database reset successfully. Please restart the server to reinitialize.", 200
+
 
 # @app.route('/transactions')
 # def transactions():
@@ -149,7 +194,14 @@ def get_user(username):
         WHERE u.username = :username
     """)
     result = conn.execute(stmt, {"username": username}).mappings().first()
-    return dict(result) if result else None
+
+    if not result:
+        return None
+    
+    user = dict(result)
+
+    user['approved'] = bool(user['approved'])
+    return user
 
 
 def get_users():
@@ -230,6 +282,27 @@ def create_transaction(ssn, amount, txn_type):
     """)
     txn = conn.execute(fetch_stmt, {"acct_num": acct_num}).mappings().first()
     return dict(txn) if txn else None
+
+def get_account_with_approval(username):
+    stmt = text("""
+        SELECT a.acct_num, a.balance,
+               u.approved
+        FROM users u
+        JOIN accounts a ON u.ssn = a.ssn
+        WHERE u.username = :username
+        LIMIT 1
+    """)
+    result = conn.execute(stmt, {"username": username}).mappings().first()
+
+    if not result:
+        return None
+
+    account = dict(result)
+    account['approved'] = bool(account['approved'])
+    return account
+
+def reset_databases():
+    conn.execute(text("DROP DATABASE IF EXISTS bankdb"))
 
 # def get_user_transactions(user_id):
 #     # Get first account for the user

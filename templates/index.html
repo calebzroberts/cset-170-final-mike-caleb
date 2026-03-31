@@ -5,17 +5,33 @@
 {% block content %}
 <h1>Welcome to Our Banking App!</h1>
 <p>Here you can either log in to manage your account or sign up if you are a new user.</p>
-<div class="actions">
-        
-    <a href="/login" class="button-outline">Log In</a>
-    <a href="/signup" class="button-primary">Sign Up</a>
-</div>
+
+{% if logged_in %}
+    <p>You are currently logged in. Visit your <a href="/account">account page</a> to view your details.</p>
+    <div class="actions">
+            
+        <a href="/account" class="button-primary">Account</a>
+    </div>
+{% else %}
+     <p>Please log in or sign up to access your account.</p>
+     
+    <div class="actions">
+            
+        <a href="/login" class="button-outline">Log In</a>
+        <a href="/signup" class="button-primary">Sign Up</a>
+    </div>
+{% endif %}
 
 
+{% if is_admin %}
 
 <h2 class="danger-heading">Danger Zone</h2>
 <p>This will reset the simulation.</p>
 <div class="actions">
-    <button class="button-outline" onclick="window.location.reload()">Reset Database</button>
+    <form method="POST" action="{{ url_for('reset_db') }}">
+        <button type="submit" class="button-outline">Reset Database</button>
+    </form>
 </div>
+
+{% endif %}
 {% endblock %}
