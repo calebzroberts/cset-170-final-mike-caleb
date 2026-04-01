@@ -309,6 +309,19 @@ form select option {
 
 
 
+/* Error styling */
+.error-text {
+    background: rgba(229, 62, 62, 0.12);
+    border: 1px solid rgba(229, 62, 62, 0.22);
+    color: #e53e3e;
+    padding: 14px 18px;
+    border-radius: 10px;
+    margin-top: 20px;
+    font-weight: 600;
+}
+
+
+
 /*Homepage styling */
 .danger-heading {
     margin-top: 10rem;
