@@ -206,6 +206,9 @@ def transfer():
         # We force it to 'account' here so the subtraction logic runs.
         if txn_category == 'debit':
             from_type = 'account'
+            
+        if txn_category == 'credit':
+            from_type = 'card'
 
         # Validation
         from_exists = conn.execute(text("SELECT 1 FROM accounts WHERE acct_num = :a"), {"a": from_acct}).first() if from_type == "account" else True
@@ -216,14 +219,26 @@ def transfer():
         elif not to_exists:
             error = "Destination account number not found."
         else:
-            # 1. Deduct from 'From' account (only if it's an internal bank account)
+            # 1. Check for sufficient funds if deducting from a bank account
+            if from_type == "account":
+                current_bal = conn.execute(
+                    text("SELECT balance FROM accounts WHERE acct_num = :acct"), 
+                    {"acct": from_acct}
+                ).first()[0]
+
+                if current_bal < amount:
+                    error = "Insufficient funds for this transfer."
+                    return render_template('transfer.html', 
+                                           user_acct_num=user_account['acct_num'] if user_account else "",
+                                           error=error, approved=approved)
+
+            # 2. Proceed with transfer if check passes
             if from_type == "account":
                 conn.execute(
                     text("UPDATE accounts SET balance = balance - :amount WHERE acct_num = :acct"),
                     {"amount": amount, "acct": from_acct}
                 )
             
-            # 2. Add to 'To' account
             conn.execute(
                 text("UPDATE accounts SET balance = balance + :amount WHERE acct_num = :acct"),
                 {"amount": amount, "acct": to_acct}
