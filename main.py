@@ -178,6 +178,9 @@ def transfer():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     
+    account = get_account_with_approval(session.get('user_id'))
+    approved = account['approved'] if account else False
+    
     user_id = session.get('user_id')
     user_account = get_account_with_approval(user_id)
     error = None
@@ -221,7 +224,8 @@ def transfer():
     
     return render_template('transfer.html', 
                            user_acct_num=user_account['acct_num'] if user_account else "",
-                           error=error)
+                           error=error,
+                           approved=approved)
 
 @app.route('/logout')
 def logout():
