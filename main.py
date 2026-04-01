@@ -70,6 +70,16 @@ def signup():
     signup_error = None
     if request.method == 'POST':
         form = request.form
+        rslt = conn.execute(text("SELECT username FROM people")).all()
+        existing_usernames = [row[0] for row in rslt]
+        if form.get("username") in existing_usernames:
+            signup_error = "Username already exists!"
+            return render_template('signup.html', error = signup_error)
+        rslt = conn.execute(text("SELECT ssn FROM users")).all()
+        existing_ssns = [row[0] for row in rslt]
+        if hash_from_str(form.get("ssn")) in existing_ssns:
+            signup_error = "An account is already associated with that SSN"
+            return render_template('signup.html', error = signup_error)
         if all(form.values()):
             user = {
                 "username":form.get("username"),
