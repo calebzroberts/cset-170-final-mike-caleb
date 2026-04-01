@@ -105,42 +105,33 @@
 
     function updateVisibility() {
         const type = txnType.value;
-        const fType = fromType.value;
-
-        // Show/Hide "From" inputs based on selection
-        fromCardDiv.style.display = fType === 'card' ? 'flex' : 'none';
-        fromAcctDiv.style.display = fType === 'account' ? 'flex' : 'none';
-        
-        // Always show "To" account field
-        document.getElementById('toAccountField').style.display = 'flex';
 
         if (type === 'debit') {
-            // Force the "From" dropdown to Account and hide the option to change it
+            // Force Send from Account
             fromType.value = "account";
             fromType.disabled = true; 
-            
-            // Ensure the account input box is visible and autofilled
-            fromAcctDiv.style.display = 'flex'; 
             fromAccountInput.value = userAcct;
             fromAccountInput.readOnly = true;
-            
-            // Let the user type the destination
             toAccountInput.value = "";
             toAccountInput.readOnly = false;
         } else if (type === 'credit') {
-            fromType.disabled = false;
-            fromAccountInput.readOnly = false;
-
-            // Autofill "To" as User and lock it
+            // Force Receive from Card
+            fromType.value = "card";
+            fromType.disabled = true; 
             toAccountInput.value = userAcct;
             toAccountInput.readOnly = true;
+        } else {
+            fromType.disabled = false;
         }
+
+        // Update display based on whatever fromType is currently set to
+        fromCardDiv.style.display = fromType.value === 'card' ? 'flex' : 'none';
+        fromAcctDiv.style.display = fromType.value === 'account' ? 'flex' : 'none';
+        document.getElementById('toAccountField').style.display = 'flex';
     }
 
     txnType.addEventListener('change', updateVisibility);
     fromType.addEventListener('change', updateVisibility);
-
-    // Initialize UI on page load
     updateVisibility();
 </script>
 
