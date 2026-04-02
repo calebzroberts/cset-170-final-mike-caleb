@@ -157,6 +157,12 @@ main {
 }
 
 
+p {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+
 
 form {
     margin-top: 14px;

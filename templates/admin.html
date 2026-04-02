@@ -10,8 +10,12 @@
     
     {% for user in users %}
     <div class="user-card">
-        <p><strong>{{ user.username }}</strong></p>
-        <p>{{ user.phone }}</p>
+        <p><strong>Username: </strong>{{ user.username }}</p>
+
+        <p><strong>Phone: </strong>{{ user.phone }}</p>
+        <p><strong>Name: </strong>{{ user.first_name }} {{ user.last_name }}</p>
+        <p><strong>SSN: </strong>{{ user.ssn }}</p>
+        <p><strong>Address: </strong>{{ user.address }}</p>
         <div class="actions">
             <form method="POST" action="{{ url_for('approve_user') }}" style="display:inline">
                 <input type="hidden" name="username" value="{{ user.username }}">
